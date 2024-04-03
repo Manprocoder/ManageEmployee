@@ -112,81 +112,84 @@ public class ProjectDetailsActivity extends AppCompatActivity {
         String empId = sharedPref.getEMP_ID();
         dialog.show();
         db.collection("Employees")
-                .document(empId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot documentSnapshot = task.getResult();
-                            if (documentSnapshot.exists()) {
-                                if (projectId != null) {
-                                    db.collection("Projects").document(projectId)
-                                            .get()
-                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                    if (task.isSuccessful()) {
-                                                        DocumentSnapshot projectDocument = task.getResult();
-                                                        if (projectDocument.exists()) {
-                                                            String title = projectDocument.getString("Title");
-                                                            String budget = projectDocument.getString("Budget");
-                                                            List<String> employeeList = (List<String>) projectDocument.get("Workers ID List");
-                                                            String stDate = projectDocument.getString("Start Date");
-                                                            String duDate = projectDocument.getString("Due Date");
+        .document(empId)
+        .get()
+        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    if (documentSnapshot.exists()) {
+                        if (projectId != null) {
+                            db.collection("Projects").document(projectId)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot projectDocument = task.getResult();
+                                        if (projectDocument.exists()) {
+                                            String title = projectDocument.getString("Title");
+                                            String budget = projectDocument.getString("Budget");
+                                            List<String> employeeList = (List<String>) projectDocument.get("Workers ID List");
+                                            String stDate = projectDocument.getString("Start Date");
+                                            String duDate = projectDocument.getString("Due Date");
 
 
-                                                            int num = employeeList.size();
-                                                            project_name.setText(title);
-                                                            project_budget.setText(budget);
-                                                            project_stDate.setText(stDate);
-                                                            project_duDate.setText(duDate);
-                                                            project_worker_num.setText(String.valueOf(num));
-                                                            scrollView.setVisibility(View.VISIBLE);
+                                            int num = employeeList.size();
+                                            project_name.setText(title);
+                                            project_budget.setText(budget);
+                                            project_stDate.setText(stDate);
+                                            project_duDate.setText(duDate);
+                                            project_worker_num.setText(String.valueOf(num));
+                                            scrollView.setVisibility(View.VISIBLE);
 
-
-                                                            List<String> taskIDList = (List<String>) projectDocument.get("taskID List");
-                                                            ArrayList<String> taskNamesList = new ArrayList<>();
-                                                            // Loop through taskIDList to fetch task names from database
-                                                            for (String taskId : taskIDList) {
-                                                                Log.d(TAG, taskId);
-                                                                FirebaseFirestore.getInstance().collection("Tasks").document(taskId)
-                                                                .get()
-                                                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
-                                                                        if (task2.isSuccessful()) {
-                                                                            DocumentSnapshot taskDocument = task2.getResult();
-                                                                            if (taskDocument.exists()) {
-                                                                                String taskName = taskDocument.getString("Task Name");
-                                                                                Log.d(TAG, taskName);
-                                                                                taskNamesList.add(taskName);
-                                                                                // Check if all task names have been fetched
-                                                                                if (taskNamesList.size() == taskIDList.size()) {
-                                                                                    StringBuilder stringBuilder = new StringBuilder();
-                                                                                    for (String item : taskNamesList) {
-                                                                                        stringBuilder.append(item).append("\n");
-                                                                                    }
-                                                                                    details.setText(stringBuilder.toString());  // display additional details
+                                            if (projectDocument.contains("taskID List")) {
+                                                List<String> taskIDList = (List<String>) projectDocument.get("taskID List");
+                                                ArrayList<String> taskNamesList = new ArrayList<>();
+                                                // Loop through taskIDList to fetch task names from database
+                                                for (String taskId : taskIDList) {
+                                                    Log.d(TAG, taskId);
+                                                    FirebaseFirestore.getInstance().collection("Tasks").document(taskId)
+                                                            .get()
+                                                            .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                                                                    if (task2.isSuccessful()) {
+                                                                        DocumentSnapshot taskDocument = task2.getResult();
+                                                                        if (taskDocument.exists()) {
+                                                                            String taskName = taskDocument.getString("Task Name");
+                                                                            Log.d(TAG, taskName);
+                                                                            taskNamesList.add(taskName);
+                                                                            // Check if all task names have been fetched
+                                                                            if (taskNamesList.size() == taskIDList.size()) {
+                                                                                StringBuilder stringBuilder = new StringBuilder();
+                                                                                for (String item : taskNamesList) {
+                                                                                    stringBuilder.append(item).append("\n");
                                                                                 }
+                                                                                details.setText(stringBuilder.toString());  // display additional details
                                                                             }
-                                                                        }//task2.isSuccessful()
-                                                                    }
-                                                                });
-                                                            }//for (String taskId : taskIDList)
-                                                        }
-                                                    }//task.isSuccessful()
-                                                }
-                                    });
+                                                                        }
+                                                                    }//task2.isSuccessful()
+                                                                }
+                                                            });
+                                                }//for (String taskId : taskIDList)
+                                            }else {//projectDocument.contains("taskID List")
+                                                details.setText("");
+                                            }
+                                        }
+                                    }//task.isSuccessful()
                                 }
-                            }
-                        } else {
-                            // Handle error
+                    });
                         }
-                        dialog.dismiss();
                     }
-                });
-    }
+            } else {
+                // Handle error
+            }
+            dialog.dismiss();
+        }
+    });
+}
 
 
     private void initGraphs(ArrayList<Integer> taskStatusList) {

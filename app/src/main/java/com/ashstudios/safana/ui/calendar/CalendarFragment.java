@@ -78,15 +78,15 @@ public class CalendarFragment extends Fragment{
     private void setMonthView() {
         monthYearText.setText(monthYearFromDate(selectedDate));
         daysInMonth = daysInMonthArray(selectedDate);
+        //Log.d(TAG, String.valueOf(daysInMonth.size()));
+
         for(DayModel value : daysInMonth){  //debug
             Log.d(TAG, value.getDay());
         }
 
         calendarRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 7, GridLayoutManager.VERTICAL , false));
-
         taskCalendarAdapter = new TaskCalendarAdapter(getActivity(), daysInMonth);
         calendarRecyclerView.setAdapter(taskCalendarAdapter);
-
     }
 
     private ArrayList<DayModel> daysInMonthArray(LocalDate date) {

@@ -124,8 +124,8 @@
         android:id="@+id/calendarRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="7"/>
+        tools:itemCount="7"
+        android:layout_gravity="center_vertical"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_calendar_task"
