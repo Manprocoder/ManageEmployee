@@ -2,27 +2,29 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:visibility="visible"
-    android:layout_width="30dp"
+    android:background="@color/background_gray"
+    app:cardBackgroundColor="@color/edit_text_stroke_color"
+    android:layout_width="50dp"
     android:layout_height="30dp">
 
     <LinearLayout
         android:id="@+id/calendarCellLayout"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
         android:layout_margin="5dp"
         android:orientation="vertical"
-        android:gravity="center"
-        android:background="#D8D0D0">
+        android:gravity="center_vertical"
+        android:background="@color/colorPrimary">
 
         <TextView
             android:id="@+id/cellDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center_vertical"
             android:text=""
-            android:textColor="#E8E8E8"
-            android:textSize="15sp"
+            android:textColor="@color/black"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
